@@ -1,20 +1,9 @@
 import sys
-import pygame
 from pygame.locals import QUIT
-import numpy
+from draw import *
 import random
-
-white = (255,255,255)
-black = (0,0,0)
-blue = (0,0,255)
-red = (255,0,0)
-size = 40
-screen_width = 1080
-screen_height = 720
-sub_width = screen_width - 2*size
-sub_height = screen_height - 3*size
-line_color = (100,255,255)
-fps = 10
+import tkinter as tk
+from tkinter import messagebox
 
 class fruits:
     def __init__(self):
@@ -22,97 +11,11 @@ class fruits:
 
     def get_loc(self): return self.loc
 
-class Snake:
-    def __init__(self, font, x, y):
-        self.font = font
-        self.x = x
-        self.y = y
-        self.dir = 1
-        self.point = 0
-        self.speed = 3
-        self.past = []
-
-    def set_point(self, point): self.point = point
-
-    def set_dir(self, dir):
-        if dir != -self.dir:
-            self.dir = dir
-
-    def add_spped(self):
-        self.speed -= 1
-        if self.speed <1:
-            self.speed = 1
-
-    def add_point(self, val=1): self.point += val
-
-    def add_len(self, loc): self.past.append(loc)
-
-    def get_speed(self): return self.speed
-
-    def get_past(self): return self.past
-
-    def get_head(self): return [self.x, self.y]
-
-    def get_font(self): return self.font
-
-    def get_point(self): return self.point
-
-    def game_over(self):
-        if self.x >= sub_width or self.x < 0 or self.y >= sub_height or self.y < 0:
-            return True
-        if len(self.past) != 1:
-            for i in self.past[3:]:
-                if i[0] == self.x and i[1] == self.y:
-                    return True
-        return False
-
-    def update_head(self):
-        if self.dir == 1:#d
-            self.x += size
-        if self.dir == -1:#a
-            self.x -= size
-        if self.dir == 2:#w
-            self.y -= size
-        if self.dir == -2:#s
-            self.y += size
-
-    def update(self):
-        if self.past != []:
-            self.past.insert(0, [self.x, self.y])
-            self.past.pop()
-        self.update_head()
-
-
 def get_random_position():
-    print("in random")
     random_x = random.randint(0, sub_width-size) // size * size
     random_y = random.randint(0, sub_height-size) // size * size
     return (random_x,random_y)
 
-def init_background(screen, game):
-    screen.fill(black)
-    draw_background(game)
-    screen.blit(game, (size, size * 2))
-
-def draw_background(game):
-    game.fill((0,0,0))
-    for i in range (0,sub_width, size):
-        pygame.draw.line(game, line_color, (i, 0), (i, sub_height))
-    for j in range (0,sub_height, size):
-        pygame.draw.line(game, line_color, (0, j), (sub_width, j))
-    pygame.draw.line(game, line_color, (sub_width-1, 0), (sub_width-1, sub_height))
-    pygame.draw.line(game, line_color, (0,  sub_height-1), (sub_width, sub_height-1))
-
-def draw_snake(game, snakes):
-    head = snakes.get_head()
-    past = snakes.get_past()
-    for i in past:
-        pygame.draw.rect(game, white, [int(i[0] + 1), int(i[1] + 1), size - 1, size - 1], 0)
-    pygame.draw.rect(game, red, [int(head[0] + 1), int(head[1] + 1), size - 1, size - 1], 0)
-
-def draw_fruit(game, fruit,):
-    loc = fruit.get_loc()
-    pygame.draw.rect(game, blue, [int(loc[0]+1), int(loc[1]+1), size-1, size-1], 0)
 
 def update(screen, game, snakes, frame_count):
     draw_snake(game, snakes)
@@ -134,6 +37,9 @@ def check_overlap(snakes, fruit):
         return True
     return  False
 
+def hide():
+    print("tttt")
+
 def main():
     pygame.init()
     frame_count = 0
@@ -145,6 +51,7 @@ def main():
     init_background(screen, game)
     main_clock = pygame.time.Clock()
     fruit = fruits()
+    game_flag = True
     while True:
         main_clock.tick(fps)
         for event in pygame.event.get():
@@ -161,10 +68,14 @@ def main():
                     snakes.set_dir(-2)
                 if event.key == pygame.K_d:
                     snakes.set_dir(1)
+                if event.key == pygame.K_r and game_flag == False:
+                    main()
         if snakes.game_over():
-            print("game over")
-            game_over = snakes.get_font().render("GAME OVER", True, (255,0,0))
-            screen.blit(game_over, (screen_width//2-3*size, 20))
+            game_over = snakes.get_font().render("GAME OVER", True, red)
+            restart = snakes.get_font().render("Press R to restart", True, red)
+            screen.blit(game_over, (screen_width//2-3*size, 10))
+            screen.blit(restart, (screen_width // 2 - 4*size, 40))
+            game_flag = False
         else:
             init_background(screen, game)
             if check_overlap(snakes, fruit):
@@ -175,6 +86,7 @@ def main():
             update(screen, game, snakes, frame_count)
         frame_count += 1
         pygame.display.update()
+
 
 if __name__ == '__main__':
     main()
