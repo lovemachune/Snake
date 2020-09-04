@@ -2,8 +2,6 @@ import sys
 from pygame.locals import QUIT
 from draw import *
 import random
-import tkinter as tk
-from tkinter import messagebox
 
 class fruits:
     def __init__(self):
