@@ -1,5 +1,4 @@
 # Snake
-<<<<<<< HEAD
 ---
 ## Install pygame
 * use the python>=2.7
@@ -30,7 +29,3 @@ initial_speed = 10 #the initial speed of snake
 
 ## Install pygame
 ***
-```
-123
->>>>>>> df8052ff3e03f8902ec4798bc13a7cc3933ebb5b
-```
