@@ -25,7 +25,4 @@ sub_height = screen_height - 3*size
 line_color = (100,255,255) # the grid color
 fps = 10 
 initial_speed = 10 #the initial speed of snake
-=======
-
-## Install pygame
-***
+```
